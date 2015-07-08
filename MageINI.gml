@@ -12,10 +12,10 @@ INI_NOTE_SIGN = ";"
 // if error return -1
 
 /*
-    ini MAPµÄ±£´æ·½Ê½
-    0 : iniµÄÎÄ¼şÎ»ÖÃ
-    1 : iniÊÇ·ñ±»¸ü¸Ä
-    2 : sectionÁĞ±íµÄË÷Òı
+    ini MAPçš„ä¿å­˜æ–¹å¼
+    0 : iniçš„æ–‡ä»¶ä½ç½®
+    1 : iniæ˜¯å¦è¢«æ›´æ”¹
+    2 : sectionåˆ—è¡¨çš„ç´¢å¼•
 */
 
 var fname ;
@@ -26,18 +26,18 @@ if(is_real(fname)) {
 }
 var file,iniID;
 
-// »ñÈ¡iniµÄID£¬´´½¨iniĞèÒªµÄmap
+// è·å–iniçš„IDï¼Œåˆ›å»ºiniéœ€è¦çš„map
 var map;
 map = ds_map_create();
 iniID = map
 
-// ½«Â·¾¶´æÈëµ½map,key=0´æ´¢µÄÊÇiniµÄÎÄ¼şÂ·¾¶
+// å°†è·¯å¾„å­˜å…¥åˆ°map,key=0å­˜å‚¨çš„æ˜¯iniçš„æ–‡ä»¶è·¯å¾„
 ds_map_add(map,0,fname)
 
-// ¸ÃiniÎÄ¼şÊÇ·ñ±»ĞŞ¸Ä
+// è¯¥iniæ–‡ä»¶æ˜¯å¦è¢«ä¿®æ”¹
 ds_map_add(map,1,false)
 
-// ¶ÁÈ¡iniÎÄ¼ş£¬²¢´æÈëmap
+// è¯»å–iniæ–‡ä»¶ï¼Œå¹¶å­˜å…¥map
 var exists,list;
 list = ds_list_create()
 exists = file_exists(fname)
@@ -65,10 +65,10 @@ return iniID;
 // if error return -1
 
 /*
-    ini MAPµÄ±£´æ·½Ê½
-    0 : iniµÄÎÄ¼şÎ»ÖÃ
-    1 : iniÊÇ·ñ±»¸ü¸Ä
-    2 : sectionÁĞ±íµÄË÷Òı
+    ini MAPçš„ä¿å­˜æ–¹å¼
+    0 : iniçš„æ–‡ä»¶ä½ç½®
+    1 : iniæ˜¯å¦è¢«æ›´æ”¹
+    2 : sectionåˆ—è¡¨çš„ç´¢å¼•
 */
 
 var iniStr ;
@@ -79,18 +79,18 @@ if(is_real(iniStr)) {
 }
 var iniID;
 
-// »ñÈ¡iniµÄID£¬´´½¨iniĞèÒªµÄmap
+// è·å–iniçš„IDï¼Œåˆ›å»ºiniéœ€è¦çš„map
 var map;
 map = ds_map_create();
 iniID = map
 
-// ½«Â·¾¶´æÈëµ½map,key=0´æ´¢µÄÊÇiniµÄÎÄ¼şÂ·¾¶
+// å°†è·¯å¾„å­˜å…¥åˆ°map,key=0å­˜å‚¨çš„æ˜¯iniçš„æ–‡ä»¶è·¯å¾„
 ds_map_add(map,0,0)
 
-// ¸ÃiniÎÄ¼şÊÇ·ñ±»ĞŞ¸Ä
+// è¯¥iniæ–‡ä»¶æ˜¯å¦è¢«ä¿®æ”¹
 ds_map_add(map,1,false)
 
-// ¶ÁÈ¡iniÎÄ¼ş£¬²¢´æÈëmap
+// è¯»å–iniæ–‡ä»¶ï¼Œå¹¶å­˜å…¥map
 var list;
 list = ds_list_create()
 
@@ -475,17 +475,17 @@ file_text_close(file)
 
 var iniID;
 
-// »ñÈ¡iniµÄID£¬´´½¨iniĞèÒªµÄmap
+// è·å–iniçš„IDï¼Œåˆ›å»ºiniéœ€è¦çš„map
 var map;
 map = argument1;
 iniID = map
 
-// sectionÁĞ±í
+// sectionåˆ—è¡¨
 var secList;
 secList = ds_list_create();
 ds_map_add(map,2,secList)
 
-// ¶ÁÈ¡iniÎÄ¼ş£¬²¢´æÈëmap
+// è¯»å–iniæ–‡ä»¶ï¼Œå¹¶å­˜å…¥map
 var exists,iniList;
 iniList = argument0
 
@@ -500,14 +500,14 @@ for(i = 0;i < size;i += 1) {
     a = string_pos(INI_SECTION_SIGN_LEFT,text)
     b = string_pos(INI_SECTION_SIGN_RIGHT,text)
     c = string_pos(INI_ITEM_SIGN,text)
-    // ¼ì²é×Ö·û´®ÊÇ·ñ·ûºÏ±ê×¼ini¸ñÊ½
+    // æ£€æŸ¥å­—ç¬¦ä¸²æ˜¯å¦ç¬¦åˆæ ‡å‡†iniæ ¼å¼
     if(text == "") continue
     if(c == 0) {
         if!(a == 1 and b > 2) {
             continue
         }
     }
-    // ¼ì²é¸ÃĞĞÊÇ·ñÎª×¢ÊÍÓï¾ä
+    // æ£€æŸ¥è¯¥è¡Œæ˜¯å¦ä¸ºæ³¨é‡Šè¯­å¥
     if(string_pos(INI_NOTE_SIGN,text) == 1) continue
     
     if(a == 1 and b > 2) {
@@ -540,7 +540,6 @@ for(i = 0;i < size;i += 1) {
             list[1] = ds_map_find_value(set_map,1)
             ds_list_add(list[0],left)
             ds_list_add(list[1],right)
-            show_debug_message("Set Item : [" + section + "] " + left + " : " + right)
         }
     }
 }
