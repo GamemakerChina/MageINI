@@ -124,12 +124,11 @@ return global.__ini_error_string;
 
 #define INI_close
 //INI_close(iniHandle)
-var iniMap,isChange,secList,is_file;
+var iniMap,isChange,secList,is_file,iniStr;
 iniMap = argument0
 isChange = ds_map_find_value(iniMap,1)
 secList = ds_map_find_value(iniMap,2)
 if(is_real(ds_map_find_value(iniMap,0))) is_file = false else is_file = true
-
 if(isChange) {
     if(is_file) {
         /*var file,fname;
@@ -156,12 +155,9 @@ if(isChange) {
         var fname;
         fname = ds_map_find_value(iniMap,0)
         INI_save_file(iniMap,fname)
-    } else {
-        var iniStr;
-        iniStr = ""
-        iniStr = INI_get_string(iniMap)
     }
 }
+if(!is_file) iniStr = INI_get_string(iniMap)
 
 var i,sMap,size;
 size = ds_list_size(secList)
@@ -173,7 +169,6 @@ for(i = 0;i < size;i += 1) {
 }
 ds_list_destroy(secList)
 ds_map_destroy(iniMap)
-
 if(is_file) {
     return 1
 } else {
@@ -321,33 +316,13 @@ ds_map_replace(ini,1,true)
 //INI_section_count(ini) : count
 return ds_list_size(ds_map_find_value(argument0,2))
 
-#define INI_key_count
-//INI_key_count(ini,section)
-var sMap;
-sMap = ds_map_find_value(argument0,argument1)
-var l;
-l = ds_map_find_value(sMap,0)
-return ds_list_size(l)
-
-
-#define INI_key_same_count
-//INI_key_same_count(ini,section,key)
-var sMap;
-sMap = ds_map_find_value(argument0,argument1)
-var l,key;
-l = ds_map_find_value(sMap,0)
-key = argument2
-var i,size,t;
-t = 0
-size = ds_list_size(l)
-for(i = 0;i < size;i += 1) {
-    var k;
-    k = ds_list_find_value(l,i)
-    if(k == key) {
-        t += 1
-    }
-}
-return t;
+#define INI_section_get_name
+///INI_section_get_name(ini,n)
+var list,ini,n;
+ini = argument0
+n = argument1
+list = ds_map_find_value(ini,2)
+return ds_list_find_value(list,n-1)
 
 #define INI_section_delete
 //INI_section_delete(ini,section)
@@ -367,6 +342,52 @@ ds_list_destroy(l[1])
 ds_map_destroy(sMap)
 ds_map_delete(ini,section)
 ds_map_replace(ini,1,true)
+
+#define INI_key_count
+//INI_key_count(ini,section)
+var sMap;
+sMap = ds_map_find_value(argument0,argument1)
+var l;
+l = ds_map_find_value(sMap,0)
+return ds_list_size(l)
+
+
+#define INI_key_get_name
+///INI_key_get_name(ini,section,n)
+var ini,section,key;
+ini = argument0
+section = argument1
+key = argument2
+
+var sMap;
+if(ds_map_exists(ini,section)) {
+    sMap = ds_map_find_value(ini,section)
+    var l,index;
+    l[0] = ds_map_find_value(sMap,0)
+    l[1] = ds_map_find_value(sMap,1)
+    index = key - 1;
+    return ds_list_find_value(l[0],index)
+}
+return false
+
+#define INI_key_same_count
+//INI_key_same_count(ini,section,key)
+var sMap;
+sMap = ds_map_find_value(argument0,argument1)
+var l,key;
+l = ds_map_find_value(sMap,0)
+key = argument2
+var i,size,t;
+t = 0
+size = ds_list_size(l)
+for(i = 0;i < size;i += 1) {
+    var k;
+    k = ds_list_find_value(l,i)
+    if(k == key) {
+        t += 1
+    }
+}
+return t;
 
 #define INI_key_delete
 //INI_key_delete(ini,section,key)
@@ -437,7 +458,6 @@ if(ds_map_exists(ini,section)) {
 }
 
 #define INI_get_string
-
 var iniMap,secList;
 iniMap = argument0
 secList = ds_map_find_value(iniMap,2)
@@ -447,7 +467,8 @@ size = ds_list_size(secList)
 for(i = 0;i < size;i += 1) {
             var a,section,sMap;
             section = ds_list_find_value(secList,i)
-            iniStr += INI_SECTION_SIGN_LEFT + section + INI_SECTION_SIGN_RIGHT
+            
+            iniStr += (INI_SECTION_SIGN_LEFT + section + INI_SECTION_SIGN_RIGHT)
             iniStr += (chr(13) + chr(10))
             sMap = ds_map_find_value(iniMap,section)
             var itemCount,l;
@@ -474,15 +495,16 @@ file_text_close(file)
 //__Load_ini(list,map)
 
 var iniID;
-
+show_debug_message("------ini loading------")
 // 获取ini的ID，创建ini需要的map
 var map;
 map = argument1;
 iniID = map
-
+show_debug_message("ini map:" + string(iniID))
 // section列表
 var secList;
 secList = ds_list_create();
+show_debug_message("section list:" + string(secList))
 ds_map_add(map,2,secList)
 
 // 读取ini文件，并存入map
@@ -515,9 +537,11 @@ for(i = 0;i < size;i += 1) {
         if(!ds_map_exists(map,section)) {
             var m,l;
             m = ds_map_create()
+            show_debug_message("section map:" + string(m))
             ds_map_add(map,section,m)
             l[0] = ds_list_create()
             l[1] = ds_list_create()
+            show_debug_message("value map:" + string(l[0]) + "," + string(l[1]))
             ds_map_add(m,0,l[0])
             ds_map_add(m,1,l[1])
             if(ds_list_find_index(secList,section) == -1) {
@@ -540,10 +564,12 @@ for(i = 0;i < size;i += 1) {
             list[1] = ds_map_find_value(set_map,1)
             ds_list_add(list[0],left)
             ds_list_add(list[1],right)
+            //show_debug_message("Set Item : [" + section + "] " + left + " : " + right)
         }
     }
 }
 ds_list_destroy(iniList)
+show_debug_message("------ini loaded------")
 return iniID;
 
 
