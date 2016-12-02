@@ -571,5 +571,3 @@ for(i = 0;i < size;i += 1) {
 ds_list_destroy(iniList)
 show_debug_message("------ini loaded------")
 return iniID;
-
-
